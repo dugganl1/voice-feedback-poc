@@ -29,17 +29,18 @@ class FeedbackAnalyzer:
                     messages=[
                         {
                             "role": "user",
-                            "content": f"""Analyze the following user feedback on a website's user experience and provide a structured, actionable summary:
-                        
-                        Feedback: "{transcript}"
-                        
-                        Output structure:
-                        1. **Executive Summary**: A concise 2-3 sentence overview summarizing the key takeaways from the feedback.
-                        2. **Positive Aspects**: A list of specific positive comments categorized by themes (e.g., design, navigation, functionality).
-                        3. **Areas for Improvement**: A prioritized list of issues or challenges, each clearly defined and grouped into high-level categories (e.g., usability, accessibility, content relevance).
-                        4. **Recommendations**: Specific, actionable suggestions to address the identified issues, tied to the themes mentioned.
-                        
-                        The summary should be clear, professional, and actionable, with insights that are easy for a UX team to understand and implement.""",
+                            "content": f"""Analyze this website feedback and provide a sharp, actionable summary:
+
+                            Feedback: "{transcript}"
+
+                            Please provide:
+                            1. **Key Points** (3 max, ordered by importance):
+                            • [Bullet points capturing the core message]
+
+                            2. **Recommended Actions** (3 max, ordered by impact):
+                            • [Specific, actionable next steps]
+
+                            Be direct and prioritize the most impactful insights. Avoid any unnecessary explanation or context.""",
                         }
                     ],
                 ),
