@@ -1,4 +1,6 @@
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.utils.feedback_analyzer import FeedbackAnalyzer
@@ -6,10 +8,16 @@ from app.utils.file_handlers import save_upload
 from app.utils.speech_processor import AudioTranscriber
 
 app = FastAPI(title="Voice Feedback API")
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Initialize the transcriber
 transcriber = AudioTranscriber(model_size="base")
 analyzer = FeedbackAnalyzer()
+
+
+@app.get("/")
+async def read_root():
+    return FileResponse("app/static/index.html")
 
 
 @app.get("/health")
@@ -24,12 +32,16 @@ async def upload_audio(file: UploadFile = File(...)):
     Upload an audio file for processing.
     Returns a confirmation of upload with file details.
     """
-    # 1. Validate file extension
-    file_extension = file.filename.split(".")[-1].lower()
-    if file_extension not in settings.ALLOWED_AUDIO_FORMATS:
+    # Debug info
+    print(f"Received file: {file.filename}")
+    print(f"Content type: {file.content_type}")
+
+    # 1. Validate content type
+    allowed_mime_types = ["audio/mp3", "audio/mpeg", "audio/wav", "audio/webm"]
+    if file.content_type not in allowed_mime_types:
         raise HTTPException(
             status_code=400,
-            detail=f"File type not allowed. Must be one of: {settings.ALLOWED_AUDIO_FORMATS}",
+            detail=f"File type '{file.content_type}' not allowed. Must be one of: {allowed_mime_types}",
         )
 
     # 2. Read file content

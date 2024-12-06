@@ -14,7 +14,10 @@ class FeedbackAnalyzer:
         Analyze transcribed feedback and generate a structured summary.
         """
         try:
-            # Run the synchronous API call in a thread pool
+            # Debug prints
+            print("Received transcript:", transcript)
+            print("Transcript type:", type(transcript))
+
             loop = asyncio.get_event_loop()
             message = await loop.run_in_executor(
                 None,
@@ -28,7 +31,7 @@ class FeedbackAnalyzer:
                             "role": "user",
                             "content": f"""Analyze the following user feedback on a website's user experience and provide a structured, actionable summary:
                         
-                        Feedback: {transcript}
+                        Feedback: "{transcript}"
                         
                         Output structure:
                         1. **Executive Summary**: A concise 2-3 sentence overview summarizing the key takeaways from the feedback.
@@ -42,7 +45,17 @@ class FeedbackAnalyzer:
                 ),
             )
 
-            return {"summary": message.content, "success": True}
+            # Debug print
+            print("Claude Response:", message.content)
+
+            analysis_text = (
+                message.content[0].text
+                if isinstance(message.content, list)
+                else message.content
+            )
+
+            return {"summary": analysis_text, "success": True}
 
         except Exception as e:
+            print("Analysis Error:", str(e))
             return {"success": False, "error": str(e)}

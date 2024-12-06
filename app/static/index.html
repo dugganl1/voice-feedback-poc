@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Voice Feedback Recorder</title>
+    <link
+      rel="stylesheet"
+      href="/static/styles.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Website Voice Feedback</h1>
+
+      <div class="recorder-container">
+        <div
+          class="record-button"
+          id="recordButton"
+        >
+          <span class="record-icon"></span>
+          <span class="record-text">Start Recording</span>
+        </div>
+        <div
+          class="timer"
+          id="timer"
+        >
+          00:00
+        </div>
+      </div>
+
+      <div class="upload-container">
+        <p>Or upload an audio file:</p>
+        <input
+          type="file"
+          id="fileUpload"
+          accept="audio/mp3,audio/wav,audio/webm"
+          class="file-upload"
+        />
+      </div>
+
+      <div
+        class="results-container"
+        id="results"
+      >
+        <div
+          class="loading hidden"
+          id="loading"
+        >
+          Processing your feedback...
+          <div class="spinner"></div>
+        </div>
+        <div
+          class="result-content"
+          id="resultContent"
+        ></div>
+      </div>
+    </div>
+    <script src="/static/script.js"></script>
+  </body>
+</html>
