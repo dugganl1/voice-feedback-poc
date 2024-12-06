@@ -2,8 +2,12 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from app.config import settings
 from app.utils.file_handlers import save_upload
+from app.utils.speech_processor import AudioTranscriber
 
 app = FastAPI(title="Voice Feedback API")
+
+# Initialize the transcriber
+transcriber = AudioTranscriber(model_size="base")
 
 
 @app.get("/health")
@@ -42,14 +46,26 @@ async def upload_audio(file: UploadFile = File(...)):
 
     # 4. Save the file
     try:
+        # 4. Save the file
         filepath = await save_upload(file)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error saving file: {str(e)}")
 
-    return {
-        "filename": file.filename,
-        "saved_path": filepath,
-        "size_mb": file_size,
-        "content_type": file.content_type,
-        "status": "saved",
-    }
+        # 5. Get transcription
+        transcription_result = await transcriber.transcribe(filepath)
+
+        if not transcription_result["success"]:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Transcription failed: {transcription_result['error']}",
+            )
+
+        return {
+            "filename": file.filename,
+            "saved_path": filepath,
+            "size_mb": file_size,
+            "content_type": file.content_type,
+            "transcription": transcription_result,
+            "status": "transcribed",
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
